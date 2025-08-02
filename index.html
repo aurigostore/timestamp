@@ -24,6 +24,10 @@
             --pink-700: #be185d;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
@@ -35,7 +39,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            overflow: hidden; /* Prevent scrollbars from glow effect */
+            overflow-x: hidden; /* Prevent horizontal scrollbars */
         }
         .glow-effect {
             position: fixed;
@@ -303,6 +307,13 @@
                     }
 
                     outputArea.style.display = 'block';
+
+                    // *** BUG FIX: SCROLL TO RESULT ***
+                    // Menambahkan jeda singkat agar DOM sempat diperbarui sebelum scroll
+                    setTimeout(() => {
+                        outputArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+
                 }
                 img.src = event.target.result;
             }
