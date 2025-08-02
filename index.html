@@ -246,12 +246,18 @@
                     const line2Text = line2Input.value;
                     
                     const now = new Date();
-                    const day = String(now.getDate()).padStart(2, '0');
+                    const year = now.getFullYear();
                     const month = String(now.getMonth() + 1).padStart(2, '0');
-                    const year = String(now.getFullYear()).slice(-2);
+                    const day = String(now.getDate()).padStart(2, '0');
                     const hours = String(now.getHours()).padStart(2, '0');
                     const minutes = String(now.getMinutes()).padStart(2, '0');
-                    const dateTimeText = `${day}/${month}/${year} | ${hours}.${minutes}`;
+                    const seconds = String(now.getSeconds()).padStart(2, '0'); // Menambahkan detik
+                    
+                    // Membuat teks untuk ditampilkan di gambar
+                    const dateTimeText = `${day}/${month}/${String(year).slice(-2)} | ${hours}.${minutes}`;
+                    
+                    // *** PEMBARUAN: Membuat nama file dinamis dengan detik ***
+                    const filename = `IMG_${year}${month}${day}_${hours}${minutes}${seconds}.png`;
 
                     // --- Setup Canvas & Font ---
                     canvas.width = img.width;
@@ -302,14 +308,13 @@
                         downloadLink.textContent = 'Buka & Simpan Gambar';
                     } else {
                         downloadLink.href = finalImageURL;
-                        downloadLink.download = 'gambar-dengan-timestamp.png';
+                        downloadLink.download = filename; // Menggunakan nama file dinamis
                         downloadLink.textContent = 'Unduh Gambar';
                     }
 
                     outputArea.style.display = 'block';
 
                     // *** BUG FIX: SCROLL TO RESULT ***
-                    // Menambahkan jeda singkat agar DOM sempat diperbarui sebelum scroll
                     setTimeout(() => {
                         outputArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }, 100);
