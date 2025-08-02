@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timestamp Generator</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --card-border-hover: rgba(59, 130, 246, 0.7);
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --pink-600: #db2777;
+            --pink-700: #be185d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent scrollbars from glow effect */
+        }
+        .glow-effect {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.15) 0%, rgba(29, 78, 216, 0) 60%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border-radius: 16px;
+            padding: 30px 35px;
+            width: 100%;
+            max-width: 550px;
+            z-index: 1;
+        }
+        .container:hover {
+             border-color: var(--card-border-hover);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+        .gradient-text {
+            background-image: linear-gradient(to right, #3b82f6, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--card-border-hover);
+        }
+        input[type="file"] {
+            padding: 8px;
+            cursor: pointer;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            background: var(--blue-600);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: var(--blue-700);
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--pink-600);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: var(--pink-700);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .output-area {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+        #resultImage {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: var(--blue-600);
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .download-btn:hover {
+            background-color: var(--blue-700);
+        }
+        .download-btn:active {
+            transform: scale(0.98);
+        }
+        canvas {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background glow effect -->
+    <div class="glow-effect"></div>
+
+    <div class="container">
+        <h1><span class="gradient-text">Timestamp Generator</span></h1>
+        
+        <div class="form-group">
+            <label for="imageLoader">1. Pilih Gambar</label>
+            <input type="file" id="imageLoader" name="imageLoader" accept="image/*">
+        </div>
+        
+        <div class="form-group">
+            <label>Watermark</label>
+            <div class="options-grid">
+                <input type="text" id="line1Input" value="POCO X3 NFC | LEICA">
+                <input type="text" id="line2Input" value="AHMAD SHODIQIN">
+            </div>
+        </div>
+
+        <button id="processBtn" class="btn">Buat TimeStamp</button>
+
+        <div id="outputArea" class="output-area">
+            <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Hasil Gambar</h2>
+            <img id="resultImage" src="" alt="Gambar dengan stempel waktu">
+            <a id="downloadLink" href="#" class="download-btn">Unduh Gambar</a>
+        </div>
+    </div>
+
+    <canvas id="imageCanvas"></canvas>
+
+    <script>
+        // --- Element References ---
+        const imageLoader = document.getElementById('imageLoader');
+        const line1Input = document.getElementById('line1Input');
+        const line2Input = document.getElementById('line2Input');
+        const processBtn = document.getElementById('processBtn');
+        const canvas = document.getElementById('imageCanvas');
+        const ctx = canvas.getContext('2d');
+        const outputArea = document.getElementById('outputArea');
+        const resultImage = document.getElementById('resultImage');
+        const downloadLink = document.getElementById('downloadLink');
+
+        // --- Main Function ---
+        function applyTimestamp() {
+            const file = imageLoader.files[0];
+            if (!file) {
+                alert("Harap pilih file gambar terlebih dahulu!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // --- Get User & Auto-generated Text ---
+                    const line1Text = line1Input.value;
+                    const line2Text = line2Input.value;
+                    
+                    const now = new Date();
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const year = String(now.getFullYear()).slice(-2);
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const dateTimeText = `${day}/${month}/${year} | ${hours}.${minutes}`;
+
+                    // --- Setup Canvas & Font ---
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const fontSize = Math.floor(img.width / 40);
+                    const padding = fontSize * 1.5;
+                    ctx.font = `${fontSize}px Inter, Arial, sans-serif`;
+                    const fontColor = '#FFFFFF';
+                    ctx.fillStyle = fontColor;
+                    
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                    ctx.shadowBlur = 5;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+
+                    // --- 1. Draw Left Bottom Text ---
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'bottom';
+                    const xLeft = padding;
+                    const yLeft = canvas.height - padding;
+                    
+                    ctx.fillText(line2Text, xLeft, yLeft);
+                    ctx.fillText(line1Text, xLeft, yLeft - fontSize * 1.2);
+
+
+                    // --- 2. Draw Right Bottom Text (Date/Time) ---
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'bottom';
+                    const xRight = canvas.width - padding;
+                    const yRight = canvas.height - padding;
+
+                    ctx.fillText(dateTimeText, xRight, yRight);
+
+
+                    // --- Display Result ---
+                    const finalImageURL = canvas.toDataURL('image/png');
+                    resultImage.src = finalImageURL;
+                    
+                    // *** PERBAIKAN UNTUK iPHONE ***
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+                    if (isIOS) {
+                        downloadLink.href = finalImageURL;
+                        downloadLink.target = '_blank';
+                        downloadLink.removeAttribute('download');
+                        downloadLink.textContent = 'Buka & Simpan Gambar';
+                    } else {
+                        downloadLink.href = finalImageURL;
+                        downloadLink.download = 'gambar-dengan-timestamp.png';
+                        downloadLink.textContent = 'Unduh Gambar';
+                    }
+
+                    outputArea.style.display = 'block';
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // --- Event Listener ---
+        processBtn.addEventListener('click', applyTimestamp);
+
+    </script>
+
+</body>
+</html>
